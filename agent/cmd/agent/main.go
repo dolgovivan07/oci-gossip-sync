@@ -3,18 +3,23 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
+
+	"github.com/dolgovivan07/oci-gossip-sync/agent/pkg/oci"
 )
 
 func main() {
-	// Позже мы добавим сюда парсинг флагов командной строки (например, порт или адрес registry)
-	fmt.Println("🚀 Starting OCI Gossip Agent...")
+	fmt.Println("🚀 Запуск OCI Gossip Agent...")
+	fmt.Println("Запрашиваем манифест для образа alpine:latest...")
 
-	// Читаем порт из переменных окружения или ставим дефолтный 8080
-	port := os.Getenv("AGENT_PORT")
-	if port == "" {
-		port = "8080"
+	manifest, err := oci.PullManifest("alpine", "latest")
+
+	if err != nil {
+		log.Fatalf("Критическая ошибка: %v", err)
 	}
 
-	log.Printf("Agent is ready and listening on port %s (stub)", port)
+	fmt.Println("✅ Манифест успешно получен!")
+	fmt.Printf("Количество слоев: %d\n", len(manifest.Layers))
+	for i, layer := range manifest.Layers {
+		fmt.Printf("Слой %d: %d байт | Хэш: %s\n", i+1, layer.Size, layer.Digest)
+	}
 }
