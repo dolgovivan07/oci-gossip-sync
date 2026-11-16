@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: oci-metrics-db
+    environment:
+      POSTGRES_USER: oci_user
+      POSTGRES_PASSWORD: oci_password
+      POSTGRES_DB: oci_metrics
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
